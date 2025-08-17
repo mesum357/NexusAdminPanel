@@ -12,11 +12,6 @@ export default defineConfig({
   },
   server: {
     port: 3001,
-    proxy: {
-      '/api': {
-        target: 'http://localhost:5000',
-        changeOrigin: true,
-      },
-    },
+    // Remove proxy in production - API calls will go directly to backend
   },
 })
