@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useToast } from '@/hooks/use-toast'
 import { useAuth } from '@/hooks/use-auth'
+import { API_BASE_URL } from '@/lib/config'
 import { Eye, EyeOff, UserPlus, Mail, Lock, User, Phone, MapPin, LogOut } from 'lucide-react'
 
 interface RegisterFormData {
@@ -112,7 +113,7 @@ export default function Register() {
     console.log('Sending registration data:', requestBody);
     
     try {
-      const response = await fetch('/api/auth/register', {
+      const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
