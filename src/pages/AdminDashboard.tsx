@@ -16,7 +16,9 @@ import {
   TrendingUp,
   BarChart3,
   LogOut,
-  User
+  User,
+  Menu,
+  X
 } from 'lucide-react'
 import { API_BASE_URL } from '@/lib/config'
 
@@ -37,6 +39,7 @@ export default function AdminDashboard() {
   const [stats, setStats] = useState<AdminStats | null>(null)
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('dashboard')
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const { user, logout } = useAuth()
   const navigate = useNavigate()
 
@@ -76,10 +79,18 @@ export default function AdminDashboard() {
     })
   }
 
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen)
+  }
+
+  const closeMobileMenu = () => {
+    setMobileMenuOpen(false)
+  }
+
   const renderDashboard = () => (
     <div className="space-y-6">
       {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Institutes</CardTitle>
@@ -137,61 +148,65 @@ export default function AdminDashboard() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <BarChart3 className="h-5 w-5" />
+            <TrendingUp className="h-5 w-5" />
             Quick Actions
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <Button 
               onClick={() => setActiveTab('pending-entities')}
-              className="h-20 flex flex-col items-center justify-center gap-2"
+              variant="outline" 
+              className="h-auto p-4 flex flex-col items-center gap-2 hover:bg-primary/5"
             >
-              <Clock className="h-6 w-6" />
-              <span>Review Pending Entities</span>
-              <Badge variant="secondary">
-                {((stats?.entities.institutes.pending || 0) + 
-                  (stats?.entities.shops.pending || 0) + 
-                  (stats?.entities.products.pending || 0))} pending
-              </Badge>
+              <Clock className="h-6 w-6 text-blue-600" />
+              <span className="text-sm font-medium">Review Pending</span>
             </Button>
-
+            
             <Button 
               onClick={() => setActiveTab('payment-requests')}
-              className="h-20 flex flex-col items-center justify-center gap-2"
+              variant="outline" 
+              className="h-auto p-4 flex flex-col items-center gap-2 hover:bg-primary/5"
             >
-              <CreditCard className="h-6 w-6" />
-              <span>Payment Requests</span>
-              <Badge variant="secondary">
-                {stats?.payments.pending || 0} pending
-              </Badge>
+              <CreditCard className="h-6 w-6 text-green-600" />
+              <span className="text-sm font-medium">Payment Requests</span>
             </Button>
-
+            
             <Button 
               onClick={() => setActiveTab('users')}
-              className="h-20 flex flex-col items-center justify-center gap-2"
+              variant="outline" 
+              className="h-auto p-4 flex flex-col items-center gap-2 hover:bg-primary/5"
             >
-              <Users className="h-6 w-6" />
-              <span>User Management</span>
+              <Users className="h-6 w-6 text-purple-600" />
+              <span className="text-sm font-medium">User Management</span>
+            </Button>
+            
+            <Button 
+              onClick={() => setActiveTab('payment-settings')}
+              variant="outline" 
+              className="h-auto p-4 flex flex-col items-center gap-2 hover:bg-primary/5"
+            >
+              <BarChart3 className="h-6 w-6 text-orange-600" />
+              <span className="text-sm font-medium">Payment Settings</span>
             </Button>
           </div>
         </CardContent>
       </Card>
 
-      {/* Recent Activity Summary */}
+      {/* Entity Summary */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <TrendingUp className="h-5 w-5" />
-            System Overview
+            <BarChart3 className="h-5 w-5" />
+            Entity Summary
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 bg-muted rounded-lg gap-3">
               <div className="flex items-center gap-3">
                 <Building2 className="h-5 w-5 text-blue-600" />
-                <span>Education & Healthcare Institutes</span>
+                <span className="text-sm sm:text-base">Educational Institutes</span>
               </div>
               <div className="flex items-center gap-2">
                 <Badge variant="outline">{stats?.entities.institutes.total || 0} total</Badge>
@@ -201,10 +216,10 @@ export default function AdminDashboard() {
               </div>
             </div>
 
-            <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 bg-muted rounded-lg gap-3">
               <div className="flex items-center gap-3">
                 <Store className="h-5 w-5 text-green-600" />
-                <span>Business Shops</span>
+                <span className="text-sm sm:text-base">Business Shops</span>
               </div>
               <div className="flex items-center gap-2">
                 <Badge variant="outline">{stats?.entities.shops.total || 0} total</Badge>
@@ -214,10 +229,10 @@ export default function AdminDashboard() {
               </div>
             </div>
 
-            <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 bg-muted rounded-lg gap-3">
               <div className="flex items-center gap-3">
                 <Package className="h-5 w-5 text-purple-600" />
-                <span>Marketplace Products</span>
+                <span className="text-sm sm:text-base">Marketplace Products</span>
               </div>
               <div className="flex items-center gap-2">
                 <Badge variant="outline">{stats?.entities.products.total || 0} total</Badge>
@@ -227,14 +242,14 @@ export default function AdminDashboard() {
               </div>
             </div>
 
-            <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 bg-muted rounded-lg gap-3">
               <div className="flex items-center gap-3">
                 <CreditCard className="h-5 w-5 text-orange-600" />
-                <span>Payment Requests</span>
+                <span className="text-sm sm:text-base">Payment Requests</span>
               </div>
               <div className="flex items-center gap-2">
                 <Badge variant="outline">{stats?.payments.total || 0} total</Badge>
-                {(stats?.payments.pending || 0) > 0 && (
+                {(stats?.entities.payments?.pending || 0) > 0 && (
                   <Badge variant="destructive">{stats?.payments.pending} pending</Badge>
                 )}
               </div>
@@ -258,17 +273,58 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8">
+      {/* Mobile Menu Overlay */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 lg:hidden" onClick={closeMobileMenu}>
+          <div className="fixed right-0 top-0 h-full w-80 bg-white shadow-lg transform transition-transform duration-300 ease-in-out">
+            <div className="p-4 border-b">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold">Menu</h3>
+                <Button variant="ghost" size="sm" onClick={closeMobileMenu}>
+                  <X className="h-5 w-5" />
+                </Button>
+              </div>
+            </div>
+            <nav className="p-4 space-y-2">
+              {[
+                { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
+                { id: 'pending-entities', label: 'Pending Entities', icon: Clock },
+                { id: 'payment-requests', label: 'Payment Requests', icon: CreditCard },
+                { id: 'users', label: 'User Management', icon: Users },
+                { id: 'payment-settings', label: 'Payment Settings', icon: BarChart3 }
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => {
+                    setActiveTab(tab.id)
+                    closeMobileMenu()
+                  }}
+                  className={`w-full flex items-center gap-3 p-3 rounded-lg text-left transition-colors ${
+                    activeTab === tab.id
+                      ? 'bg-primary text-primary-foreground'
+                      : 'hover:bg-gray-100'
+                  }`}
+                >
+                  <tab.icon className="h-5 w-5" />
+                  {tab.label}
+                </button>
+              ))}
+            </nav>
+          </div>
+        </div>
+      )}
+
+      <div className="container mx-auto px-4 py-4 sm:py-8">
         {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between">
+        <div className="mb-6 sm:mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
-              <p className="text-gray-600">Manage entities, payments, and system operations</p>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
+              <p className="text-gray-600 text-sm sm:text-base">Manage entities, payments, and system operations</p>
             </div>
             
             {/* User Info and Logout */}
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
               <div className="flex items-center gap-2 text-sm text-gray-600">
                 <User className="h-4 w-4" />
                 <span>Welcome, {user?.fullName || user?.username || 'Admin'}</span>
@@ -281,7 +337,7 @@ export default function AdminDashboard() {
                 onClick={handleLogout}
                 variant="outline"
                 size="sm"
-                className="flex items-center gap-2 hover:bg-red-50 hover:text-red-600 hover:border-red-200"
+                className="flex items-center gap-2 hover:bg-red-50 hover:text-red-600 hover:border-red-200 w-full sm:w-auto"
               >
                 <LogOut className="h-4 w-4" />
                 Logout
@@ -290,60 +346,42 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Navigation Tabs */}
-        <div className="mb-6">
+        {/* Mobile Menu Button */}
+        <div className="lg:hidden mb-4">
+          <Button
+            onClick={toggleMobileMenu}
+            variant="outline"
+            size="sm"
+            className="flex items-center gap-2"
+          >
+            <Menu className="h-4 w-4" />
+            Menu
+          </Button>
+        </div>
+
+        {/* Navigation Tabs - Hidden on mobile, shown in mobile menu */}
+        <div className="hidden lg:block mb-6">
           <div className="border-b border-gray-200">
             <nav className="-mb-px flex space-x-8">
-              <button
-                onClick={() => setActiveTab('dashboard')}
-                className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                  activeTab === 'dashboard'
-                    ? 'border-primary text-primary'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                Dashboard
-              </button>
-              <button
-                onClick={() => setActiveTab('pending-entities')}
-                className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                  activeTab === 'pending-entities'
-                    ? 'border-primary text-primary'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                Pending Entities
-              </button>
-              <button
-                onClick={() => setActiveTab('payment-requests')}
-                className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                  activeTab === 'payment-requests'
-                    ? 'border-primary text-primary'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                Payment Requests
-              </button>
-              <button
-                onClick={() => setActiveTab('users')}
-                className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                  activeTab === 'users'
-                    ? 'border-primary text-primary'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                User Management
-              </button>
-              <button
-                onClick={() => setActiveTab('payment-settings')}
-                className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                  activeTab === 'payment-settings'
-                    ? 'border-primary text-primary'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                Payment Settings
-              </button>
+              {[
+                { id: 'dashboard', label: 'Dashboard' },
+                { id: 'pending-entities', label: 'Pending Entities' },
+                { id: 'payment-requests', label: 'Payment Requests' },
+                { id: 'users', label: 'User Management' },
+                { id: 'payment-settings', label: 'Payment Settings' }
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                    activeTab === tab.id
+                      ? 'border-primary text-primary'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
             </nav>
           </div>
         </div>

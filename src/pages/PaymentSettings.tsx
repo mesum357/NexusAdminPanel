@@ -98,7 +98,7 @@ export default function PaymentSettings() {
       if (file.size > 5 * 1024 * 1024) { // 5MB limit
         toast({
           title: 'File too large',
-          description: 'QR code image must be less than 5MB',
+          description: 'Please select a file smaller than 5MB',
           variant: 'destructive'
         })
         return
@@ -113,9 +113,10 @@ export default function PaymentSettings() {
     }
   }
 
-  const handleSave = async () => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
     setSaving(true)
-    
+
     try {
       const formData = new FormData()
       formData.append('bankName', settings.bankName)
@@ -136,19 +137,19 @@ export default function PaymentSettings() {
         body: formData
       })
 
-      if (response.ok) {
-        toast({
-          title: 'Success',
-          description: 'Payment settings saved successfully'
-        })
-        
-        // Refresh settings to get the updated QR code URL
-        await fetchPaymentSettings()
-        setQrCodeFile(null)
-      } else {
-        const error = await response.json()
-        throw new Error(error.error || 'Failed to save settings')
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to save payment settings')
       }
+
+      toast({
+        title: 'Success',
+        description: 'Payment settings saved successfully'
+      })
+
+      // Refresh settings
+      await fetchPaymentSettings()
+      setQrCodeFile(null)
     } catch (error: any) {
       toast({
         title: 'Error',
@@ -173,69 +174,76 @@ export default function PaymentSettings() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Payment Settings</h2>
-          <p className="text-gray-600">Manage bank details and payment amounts for entity creation</p>
+          <p className="text-gray-600 text-sm sm:text-base">Manage bank details and payment amounts for entity creation</p>
         </div>
-        <Button onClick={fetchPaymentSettings} variant="outline">
+        <Button onClick={fetchPaymentSettings} variant="outline" size="sm" className="w-full sm:w-auto">
           <RefreshCw className="h-4 w-4 mr-2" />
           Refresh
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <form onSubmit={handleSubmit} className="space-y-6">
         {/* Bank Details */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
-              <Building2 className="h-5 w-5" />
+              <CreditCard className="h-5 w-5" />
               Bank Account Details
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="bankName">Bank Name *</Label>
-              <Input
-                id="bankName"
-                value={settings.bankName}
-                onChange={(e) => handleInputChange('bankName', e.target.value)}
-                placeholder="e.g., HBL Bank"
-              />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="bankName">Bank Name *</Label>
+                <Input
+                  id="bankName"
+                  value={settings.bankName}
+                  onChange={(e) => handleInputChange('bankName', e.target.value)}
+                  placeholder="e.g., HBL Bank"
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="accountTitle">Account Title *</Label>
+                <Input
+                  id="accountTitle"
+                  value={settings.accountTitle}
+                  onChange={(e) => handleInputChange('accountTitle', e.target.value)}
+                  placeholder="e.g., Pak Nexus Services"
+                  required
+                />
+              </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="accountTitle">Account Title *</Label>
-              <Input
-                id="accountTitle"
-                value={settings.accountTitle}
-                onChange={(e) => handleInputChange('accountTitle', e.target.value)}
-                placeholder="e.g., Pak Nexus Services"
-              />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="accountNumber">Account Number *</Label>
+                <Input
+                  id="accountNumber"
+                  value={settings.accountNumber}
+                  onChange={(e) => handleInputChange('accountNumber', e.target.value)}
+                  placeholder="e.g., 1234-5678-9012-3456"
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="iban">IBAN *</Label>
+                <Input
+                  id="iban"
+                  value={settings.iban}
+                  onChange={(e) => handleInputChange('iban', e.target.value)}
+                  placeholder="e.g., PK36HABB0000001234567890"
+                  required
+                />
+              </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="accountNumber">Account Number *</Label>
-              <Input
-                id="accountNumber"
-                value={settings.accountNumber}
-                onChange={(e) => handleInputChange('accountNumber', e.target.value)}
-                placeholder="e.g., 1234-5678-9012-3456"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="iban">IBAN *</Label>
-              <Input
-                id="iban"
-                value={settings.iban}
-                onChange={(e) => handleInputChange('iban', e.target.value)}
-                placeholder="e.g., PK36HABB0000001234567890"
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="branchCode">Branch Code</Label>
                 <Input
@@ -310,7 +318,7 @@ export default function PaymentSettings() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="shopAmount">Shop Creation</Label>
                   <Input
@@ -358,24 +366,29 @@ export default function PaymentSettings() {
             </CardContent>
           </Card>
         </div>
-      </div>
 
-      {/* Save Button */}
-      <div className="flex justify-end">
-        <Button onClick={handleSave} disabled={saving} size="lg">
-          {saving ? (
-            <>
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-              Saving...
-            </>
-          ) : (
-            <>
-              <Save className="h-4 w-4 mr-2" />
-              Save Settings
-            </>
-          )}
-        </Button>
-      </div>
+        {/* Submit Button */}
+        <div className="flex justify-end">
+          <Button
+            type="submit"
+            disabled={saving}
+            className="w-full sm:w-auto"
+            size="lg"
+          >
+            {saving ? (
+              <>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                Saving...
+              </>
+            ) : (
+              <>
+                <Save className="h-4 w-4 mr-2" />
+                Save Settings
+              </>
+            )}
+          </Button>
+        </div>
+      </form>
     </div>
   )
 }

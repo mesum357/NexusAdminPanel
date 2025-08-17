@@ -328,12 +328,12 @@ export default function PaymentRequests() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Payment Requests</h2>
-          <p className="text-gray-600">Review and verify payment requests from users</p>
+          <p className="text-gray-600 text-sm sm:text-base">Review and verify payment requests from users</p>
         </div>
-        <Button onClick={fetchPaymentRequests} variant="outline">
+        <Button onClick={fetchPaymentRequests} variant="outline" size="sm" className="w-full sm:w-auto">
           <RefreshCw className="h-4 w-4 mr-2" />
           Refresh
         </Button>
@@ -345,7 +345,7 @@ export default function PaymentRequests() {
           <CardTitle className="text-lg">Filters</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <div>
               <Label htmlFor="status-filter">Status</Label>
               <Select value={filters.status || "all"} onValueChange={(value) => setFilters(prev => ({ ...prev, status: value === "all" ? "" : value }))}>
@@ -399,23 +399,25 @@ export default function PaymentRequests() {
           <p className="text-gray-500">No payment requests match your current filters</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-4 sm:gap-6">
           {paymentRequests.map(renderPaymentRequestCard)}
         </div>
       )}
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-2">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-2">
           <Button
             variant="outline"
             onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
             disabled={currentPage === 1}
+            size="sm"
+            className="w-full sm:w-auto"
           >
             Previous
           </Button>
           
-          <span className="text-sm text-gray-600">
+          <span className="text-sm text-gray-600 text-center">
             Page {currentPage} of {totalPages}
           </span>
           
@@ -423,6 +425,8 @@ export default function PaymentRequests() {
             variant="outline"
             onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
             disabled={currentPage === totalPages}
+            size="sm"
+            className="w-full sm:w-auto"
           >
             Next
           </Button>
@@ -431,7 +435,7 @@ export default function PaymentRequests() {
 
       {/* Review Dialog */}
       <Dialog open={showReviewDialog} onOpenChange={setShowReviewDialog}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md mx-4">
           <DialogHeader>
             <DialogTitle>Review Payment Request</DialogTitle>
             <DialogDescription>

@@ -223,7 +223,7 @@ export default function PendingEntities() {
             </p>
           )}
           
-          <div className="grid grid-cols-2 gap-4 text-sm">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-sm">
             <div className="flex items-center gap-2">
               <User className="h-4 w-4 text-muted-foreground" />
               <span className="text-muted-foreground">Owner:</span>
@@ -271,7 +271,7 @@ export default function PendingEntities() {
     }
 
     return (
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-4 sm:gap-6">
         {entityList.map(renderEntityCard)}
       </div>
     )
@@ -291,12 +291,12 @@ export default function PendingEntities() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Pending Entities</h2>
-          <p className="text-gray-600">Review and approve or reject submitted entities</p>
+          <p className="text-gray-600 text-sm sm:text-base">Review and approve or reject submitted entities</p>
         </div>
-        <Button onClick={fetchPendingEntities} variant="outline">
+        <Button onClick={fetchPendingEntities} variant="outline" size="sm" className="w-full sm:w-auto">
           Refresh
         </Button>
       </div>
