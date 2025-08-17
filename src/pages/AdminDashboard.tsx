@@ -249,7 +249,7 @@ export default function AdminDashboard() {
               </div>
               <div className="flex items-center gap-2">
                 <Badge variant="outline">{stats?.payments.total || 0} total</Badge>
-                {(stats?.entities.payments?.pending || 0) > 0 && (
+                {(stats?.payments.pending || 0) > 0 && (
                   <Badge variant="destructive">{stats?.payments.pending} pending</Badge>
                 )}
               </div>

@@ -7,7 +7,6 @@ import { useToast } from '@/hooks/use-toast'
 import { 
   CreditCard, 
   QrCode, 
-  Building2, 
   Save,
   RefreshCw
 } from 'lucide-react'
