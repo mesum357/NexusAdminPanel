@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useToast } from '@/hooks/use-toast'
-import { Eye, EyeOff, UserPlus, Mail, Lock, User, Phone, MapPin } from 'lucide-react'
+import { useAuth } from '@/hooks/use-auth'
+import { Eye, EyeOff, UserPlus, Mail, Lock, User, Phone, MapPin, LogOut } from 'lucide-react'
 
 interface RegisterFormData {
   username: string
@@ -33,6 +34,16 @@ export default function Register() {
   
   const { toast } = useToast()
   const navigate = useNavigate()
+  const { logout } = useAuth()
+
+  const handleLogout = () => {
+    logout()
+    navigate('/login')
+    toast({
+      title: 'Logged Out',
+      description: 'You have been logged out.',
+    })
+  }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -145,7 +156,20 @@ export default function Register() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <Card className="shadow-xl border-0">
-          <CardHeader className="text-center space-y-4 pb-6">
+          <CardHeader className="text-center space-y-4 pb-6 relative">
+            {/* Logout Button */}
+            <div className="absolute top-0 right-0">
+              <Button
+                onClick={handleLogout}
+                variant="ghost"
+                size="sm"
+                className="text-gray-500 hover:text-red-600 hover:bg-red-50"
+              >
+                <LogOut className="h-4 w-4 mr-1" />
+                Logout
+              </Button>
+            </div>
+            
             <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
               <UserPlus className="h-8 w-8 text-primary" />
             </div>
