@@ -44,6 +44,7 @@ interface PaymentRequest {
   verifiedBy?: string
   verifiedAt?: string
   verificationNotes?: string
+  screenshotFile?: string
 }
 
 export default function PaymentRequests() {
@@ -307,6 +308,22 @@ export default function PaymentRequests() {
             <div className="text-sm">
               <span className="text-muted-foreground">Verification Notes:</span>
               <p className="text-gray-600 mt-1">{request.verificationNotes}</p>
+            </div>
+          )}
+          
+          {request.screenshotFile && (
+            <div className="text-sm">
+              <span className="text-muted-foreground">Payment Screenshot:</span>
+              <div className="mt-2">
+                <img 
+                  src={`${API_BASE_URL}/uploads/${request.screenshotFile}`}
+                  alt="Payment Screenshot"
+                  className="max-w-full h-auto max-h-48 rounded-lg border shadow-sm"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                  }}
+                />
+              </div>
             </div>
           )}
         </div>

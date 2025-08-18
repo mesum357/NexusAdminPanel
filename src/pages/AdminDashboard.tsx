@@ -291,7 +291,8 @@ export default function AdminDashboard() {
                 { id: 'pending-entities', label: 'Pending Entities', icon: Clock },
                 { id: 'payment-requests', label: 'Payment Requests', icon: CreditCard },
                 { id: 'users', label: 'User Management', icon: Users },
-                { id: 'payment-settings', label: 'Payment Settings', icon: BarChart3 }
+                { id: 'payment-settings', label: 'Payment Settings', icon: BarChart3 },
+                { id: 'profile', label: 'Profile', icon: User }
               ].map((tab) => (
                 <button
                   key={tab.id}
@@ -368,7 +369,8 @@ export default function AdminDashboard() {
                  { id: 'pending-entities', label: 'Pending Entities' },
                  { id: 'payment-requests', label: 'Payment Requests' },
                  { id: 'users', label: 'User Management' },
-                 { id: 'payment-settings', label: 'Payment Settings' }
+                 { id: 'payment-settings', label: 'Payment Settings' },
+                 { id: 'profile', label: 'Profile' }
                ].map((tab) => (
                  <button
                    key={tab.id}
@@ -398,6 +400,7 @@ export default function AdminDashboard() {
           {activeTab === 'payment-requests' && <PaymentRequests />}
           {activeTab === 'users' && <UserManagement />}
           {activeTab === 'payment-settings' && <PaymentSettings />}
+          {activeTab === 'profile' && <UserProfile />}
         </motion.div>
       </div>
     </div>
@@ -408,3 +411,4 @@ import PendingEntities from './PendingEntities'
 import PaymentRequests from './PaymentRequests'
 import UserManagement from './UserManagement'
 import PaymentSettings from './PaymentSettings'
+import UserProfile from './UserProfile'
