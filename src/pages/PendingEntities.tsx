@@ -61,9 +61,7 @@ export default function PendingEntities() {
 
   const fetchPendingEntities = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/admin/pending-entities`, {
-        credentials: 'include'
-      })
+      const response = await fetch(`${API_BASE_URL}/api/admin/public/pending-entities`)
       
       if (!response.ok) {
         throw new Error('Failed to fetch pending entities')

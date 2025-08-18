@@ -76,9 +76,7 @@ export default function PaymentRequests() {
       if (filters.status) params.append('status', filters.status)
       if (filters.entityType) params.append('entityType', filters.entityType)
 
-      const response = await fetch(`${API_BASE_URL}/api/admin/payment-requests?${params}`, {
-        credentials: 'include'
-      })
+      const response = await fetch(`${API_BASE_URL}/api/admin/public/payment-requests?${params}`)
       
       if (!response.ok) {
         throw new Error('Failed to fetch payment requests')

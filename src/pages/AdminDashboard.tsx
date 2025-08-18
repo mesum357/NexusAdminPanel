@@ -44,9 +44,7 @@ export default function AdminDashboard() {
 
   const fetchAdminStats = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/admin/stats`, {
-        credentials: 'include'
-      })
+      const response = await fetch(`${API_BASE_URL}/api/admin/public/stats`)
       
       if (!response.ok) {
         throw new Error('Failed to fetch admin statistics')

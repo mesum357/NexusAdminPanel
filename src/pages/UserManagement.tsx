@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useToast } from '@/hooks/use-toast'
+import { API_BASE_URL } from '@/lib/config'
 import { 
   Users, 
   Shield, 
@@ -48,36 +49,23 @@ export default function UserManagement() {
 
   const fetchUsers = async () => {
     try {
-      // Note: This endpoint doesn't exist yet, we'll need to create it
-      // For now, we'll use a mock response
-      const mockUsers: User[] = [
-        {
-          _id: '1',
-          username: 'admin@example.com',
-          email: 'admin@example.com',
-          fullName: 'Admin User',
-          mobile: '+1234567890',
-          city: 'Admin City',
-          isAdmin: true,
-          verified: true,
-          createdAt: new Date().toISOString(),
-          lastLogin: new Date().toISOString()
-        },
-        {
-          _id: '2',
-          username: 'user@example.com',
-          email: 'user@example.com',
-          fullName: 'Regular User',
-          mobile: '+0987654321',
-          city: 'User City',
-          isAdmin: false,
-          verified: true,
-          createdAt: new Date().toISOString(),
-          lastLogin: new Date().toISOString()
-        }
-      ]
+      const params = new URLSearchParams({
+        page: '1',
+        limit: '100'
+      })
       
-      setUsers(mockUsers)
+      if (searchTerm) params.append('search', searchTerm)
+      if (roleFilter) params.append('role', roleFilter)
+      if (verificationFilter) params.append('verified', verificationFilter)
+
+      const response = await fetch(`${API_BASE_URL}/api/admin/public/users?${params}`)
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch users')
+      }
+      
+      const data = await response.json()
+      setUsers(data.users)
     } catch (error: any) {
       toast({
         title: 'Error',
