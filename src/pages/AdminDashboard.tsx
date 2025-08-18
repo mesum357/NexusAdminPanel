@@ -4,8 +4,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { useToast } from '@/hooks/use-toast'
-import { useAuth } from '@/hooks/use-auth'
-import { useNavigate } from 'react-router-dom'
 import { 
   Building2, 
   Store, 
@@ -15,7 +13,6 @@ import {
   Clock, 
   TrendingUp,
   BarChart3,
-  LogOut,
   User,
   Menu,
   X
@@ -40,8 +37,6 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('dashboard')
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const { user, logout } = useAuth()
-  const navigate = useNavigate()
 
   useEffect(() => {
     fetchAdminStats()
@@ -70,14 +65,7 @@ export default function AdminDashboard() {
     }
   }
 
-  const handleLogout = () => {
-    logout()
-    navigate('/login')
-    toast({
-      title: 'Logged Out',
-      description: 'You have been logged out.',
-    })
-  }
+
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen)
@@ -324,25 +312,13 @@ export default function AdminDashboard() {
               <p className="text-gray-600 text-sm sm:text-base">Manage entities, payments, and system operations</p>
             </div>
             
-            {/* User Info and Logout */}
+            {/* User Info */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
               <div className="flex items-center gap-2 text-sm text-gray-600">
                 <User className="h-4 w-4" />
-                <span>Welcome, {user?.fullName || user?.username || 'Admin'}</span>
-                {user?.isAdmin && (
-                  <Badge variant="secondary" className="text-xs">Admin</Badge>
-                )}
+                <span>Welcome, Admin</span>
+                <Badge variant="secondary" className="text-xs">Admin</Badge>
               </div>
-              
-              <Button
-                onClick={handleLogout}
-                variant="outline"
-                size="sm"
-                className="flex items-center gap-2 hover:bg-red-50 hover:text-red-600 hover:border-red-200 w-full sm:w-auto"
-              >
-                <LogOut className="h-4 w-4" />
-                Logout
-              </Button>
             </div>
           </div>
         </div>

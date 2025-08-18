@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useToast } from '@/hooks/use-toast'
-import { useAuth } from '@/hooks/use-auth'
 import { useNavigate } from 'react-router-dom'
 import { 
   User, 
@@ -26,9 +25,8 @@ interface UserProfile {
 
 export default function UserProfile() {
   const { toast } = useToast()
-  const { user } = useAuth()
   const navigate = useNavigate()
-  
+  const [user, setUser] = useState<UserProfile | null>(null)
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [showNewPassword, setShowNewPassword] = useState(false)
@@ -43,14 +41,21 @@ export default function UserProfile() {
   })
 
   useEffect(() => {
-    if (user) {
-      setFormData(prev => ({
-        ...prev,
-        username: user.username || '',
-        email: user.email || ''
-      }))
+    // Simulate fetching user data
+    const adminUser = {
+      username: 'admin',
+      email: 'admin@example.com',
+      fullName: 'Admin User'
     }
-  }, [user])
+    setUser(adminUser)
+    
+    // Set form data
+    setFormData(prev => ({
+      ...prev,
+      username: adminUser.username || '',
+      email: adminUser.email || ''
+    }))
+  }, [])
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({
