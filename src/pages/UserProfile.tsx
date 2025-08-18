@@ -26,7 +26,7 @@ interface UserProfile {
 
 export default function UserProfile() {
   const { toast } = useToast()
-  const { user, logout } = useAuth()
+  const { user } = useAuth()
   const navigate = useNavigate()
   
   const [loading, setLoading] = useState(false)
