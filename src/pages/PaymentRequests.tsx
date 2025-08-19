@@ -310,21 +310,23 @@ export default function PaymentRequests() {
             </div>
           </div>
           
-          {/* Agent ID row - separate from the grid */}
-          <div className="flex items-center gap-2 text-sm">
-            <User className="h-4 w-4 text-muted-foreground" />
-            <span className="text-muted-foreground">Agent ID:</span>
-            <span className="font-medium">
-              {request.agentId || 'N/A'}
+          {/* Agent ID row - make it very prominent */}
+          <div className="flex items-center gap-2 text-sm bg-yellow-50 border border-yellow-200 p-3 rounded-lg">
+            <User className="h-5 w-5 text-yellow-600" />
+            <span className="text-yellow-800 font-semibold">Agent ID:</span>
+            <span className={`font-bold text-lg ${request.agentId && request.agentId !== 'null' ? 'text-green-600' : 'text-red-600'}`}>
+              {request.agentId && request.agentId !== 'null' ? request.agentId : 'N/A'}
             </span>
           </div>
           
-          {/* Debug information for development */}
-          {process.env.NODE_ENV === 'development' && (
-            <div className="text-xs text-muted-foreground">
-              <span>Debug: EntityType={request.entityType}, EntityID={request.entityId || 'null'}, AgentID={request.agentId || 'null'}</span>
-            </div>
-          )}
+          {/* Enhanced debug information */}
+          <div className="text-xs text-gray-500 bg-gray-100 p-2 rounded border">
+            <div className="font-semibold mb-1">Debug Info:</div>
+            <div>EntityType: <span className="font-mono">{request.entityType}</span></div>
+            <div>EntityID: <span className="font-mono">{request.entityId || 'null'}</span></div>
+            <div>AgentID: <span className="font-mono">{request.agentId || 'null'}</span></div>
+            <div>Has Agent ID: <span className="font-mono">{request.agentId ? 'YES' : 'NO'}</span></div>
+          </div>
           
           <div className="text-sm">
             <span className="text-muted-foreground">Transaction ID:</span>
