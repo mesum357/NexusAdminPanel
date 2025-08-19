@@ -45,6 +45,7 @@ interface PaymentRequest {
   verifiedAt?: string
   verificationNotes?: string
   screenshotFile?: string
+  agentId?: string
 }
 
 export default function PaymentRequests() {
@@ -288,6 +289,14 @@ export default function PaymentRequests() {
                 {new Date(request.transactionDate).toLocaleDateString()}
               </span>
             </div>
+            
+            {request.agentId && (
+              <div className="flex items-center gap-2 col-span-2">
+                <User className="h-4 w-4 text-muted-foreground" />
+                <span className="text-muted-foreground">Agent ID:</span>
+                <span className="font-medium">{request.agentId}</span>
+              </div>
+            )}
           </div>
           
           <div className="text-sm">
