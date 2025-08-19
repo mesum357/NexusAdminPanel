@@ -84,6 +84,8 @@ export default function PaymentRequests() {
       }
       
       const data = await response.json()
+      console.log('Payment requests data:', data.paymentRequests)
+      console.log('Sample payment request:', data.paymentRequests[0])
       setPaymentRequests(data.paymentRequests)
       setTotalPages(data.totalPages)
     } catch (error: any) {
