@@ -33,6 +33,7 @@ interface PaymentRequest {
     fullName?: string
   }
   entityType: 'shop' | 'institute' | 'hospital' | 'marketplace'
+  entityId?: string
   amount: number
   transactionId: string
   bankName: string
@@ -90,7 +91,7 @@ export default function PaymentRequests() {
       // Enhanced debugging for Agent ID
       if (data.paymentRequests && data.paymentRequests.length > 0) {
         console.log('=== AGENT ID DEBUGGING ===')
-        data.paymentRequests.forEach((payment, index) => {
+        data.paymentRequests.forEach((payment: PaymentRequest, index: number) => {
           console.log(`Payment ${index + 1}:`, {
             id: payment._id,
             entityType: payment.entityType,
