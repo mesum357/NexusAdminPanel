@@ -453,9 +453,103 @@ export default function PaymentRequests() {
           <p className="text-gray-500">No payment requests match your current filters</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-4 sm:gap-6">
-          {paymentRequests.map(renderPaymentRequestCard)}
-        </div>
+        <>
+          {/* Table View */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Payment Requests Table</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b">
+                      <th className="text-left p-2 font-medium">User</th>
+                      <th className="text-left p-2 font-medium">Entity Type</th>
+                      <th className="text-left p-2 font-medium">Agent ID</th>
+                      <th className="text-left p-2 font-medium">Amount</th>
+                      <th className="text-left p-2 font-medium">Bank</th>
+                      <th className="text-left p-2 font-medium">Date</th>
+                      <th className="text-left p-2 font-medium">Status</th>
+                      <th className="text-left p-2 font-medium">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {paymentRequests.map((request) => (
+                      <tr key={request._id} className="border-b hover:bg-gray-50">
+                        <td className="p-2">
+                          <div className="flex items-center gap-2">
+                            <User className="h-4 w-4 text-muted-foreground" />
+                            <span className="font-medium">
+                              {request.user.fullName || request.user.username}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="p-2">
+                          <Badge variant="outline" className="capitalize">
+                            {request.entityType}
+                          </Badge>
+                        </td>
+                        <td className="p-2">
+                          <span className={`font-mono text-sm ${
+                            request.agentId && request.agentId !== 'null' 
+                              ? 'text-green-600 font-bold' 
+                              : 'text-red-600'
+                          }`}>
+                            {request.agentId && request.agentId !== 'null' ? request.agentId : 'N/A'}
+                          </span>
+                        </td>
+                        <td className="p-2">
+                          <div className="flex items-center gap-2">
+                            <DollarSign className="h-4 w-4 text-muted-foreground" />
+                            <span className="font-medium">${request.amount}</span>
+                          </div>
+                        </td>
+                        <td className="p-2">
+                          <div className="flex items-center gap-2">
+                            <CreditCard className="h-4 w-4 text-muted-foreground" />
+                            <span>{request.bankName}</span>
+                          </div>
+                        </td>
+                        <td className="p-2">
+                          <div className="flex items-center gap-2">
+                            <Calendar className="h-4 w-4 text-muted-foreground" />
+                            <span>{new Date(request.transactionDate).toLocaleDateString()}</span>
+                          </div>
+                        </td>
+                        <td className="p-2">
+                          <Badge 
+                            variant={request.status === 'pending' ? 'default' : 
+                                   request.status === 'verified' ? 'default' : 'destructive'}
+                            className="capitalize"
+                          >
+                            {request.status}
+                          </Badge>
+                        </td>
+                        <td className="p-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleReview(request)}
+                            disabled={request.status !== 'pending'}
+                          >
+                            <Eye className="h-4 w-4 mr-2" />
+                            {request.status === 'pending' ? 'Review' : 'View'}
+                          </Button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Card View (existing) */}
+          <div className="grid grid-cols-1 gap-4 sm:gap-6">
+            {paymentRequests.map(renderPaymentRequestCard)}
+          </div>
+        </>
       )}
 
       {/* Pagination */}

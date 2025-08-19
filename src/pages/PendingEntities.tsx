@@ -29,6 +29,8 @@ interface PendingEntity {
   type?: string
   city?: string
   description?: string
+  domain?: string
+  agentId?: string
   owner: {
     _id: string
     username: string
@@ -68,6 +70,7 @@ export default function PendingEntities() {
       }
       
       const data = await response.json()
+      console.log('Pending entities data:', data)
       setEntities(data)
     } catch (error: any) {
       toast({
@@ -91,6 +94,12 @@ export default function PendingEntities() {
     
     setIsSubmitting(true)
     try {
+      console.log('Approving entity:', {
+        id: selectedEntity._id,
+        entityType: selectedEntity.entityType,
+        name: getEntityName(selectedEntity)
+      })
+      
       const response = await fetch(`${API_BASE_URL}/api/admin/${selectedEntity.entityType}/${selectedEntity._id}/approval`, {
         method: 'PUT',
         headers: {
@@ -104,12 +113,17 @@ export default function PendingEntities() {
       })
 
       if (!response.ok) {
-        throw new Error('Failed to approve entity')
+        const errorText = await response.text()
+        console.error('Approval failed:', response.status, errorText)
+        throw new Error(`Failed to approve entity: ${response.status} - ${errorText}`)
       }
+
+      const result = await response.json()
+      console.log('Approval successful:', result)
 
       toast({
         title: 'Success',
-        description: 'Entity approved successfully',
+        description: `Entity approved successfully`,
         variant: 'default'
       })
 
@@ -117,6 +131,7 @@ export default function PendingEntities() {
       setSelectedEntity(null)
       fetchPendingEntities() // Refresh the list
     } catch (error: any) {
+      console.error('Approval error:', error)
       toast({
         title: 'Error',
         description: error.message || 'Failed to approve entity',
@@ -132,6 +147,12 @@ export default function PendingEntities() {
     
     setIsSubmitting(true)
     try {
+      console.log('Rejecting entity:', {
+        id: selectedEntity._id,
+        entityType: selectedEntity.entityType,
+        name: getEntityName(selectedEntity)
+      })
+      
       const response = await fetch(`${API_BASE_URL}/api/admin/${selectedEntity.entityType}/${selectedEntity._id}/approval`, {
         method: 'PUT',
         headers: {
@@ -145,12 +166,17 @@ export default function PendingEntities() {
       })
 
       if (!response.ok) {
-        throw new Error('Failed to reject entity')
+        const errorText = await response.text()
+        console.error('Rejection failed:', response.status, errorText)
+        throw new Error(`Failed to reject entity: ${response.status} - ${errorText}`)
       }
+
+      const result = await response.json()
+      console.log('Rejection successful:', result)
 
       toast({
         title: 'Success',
-        description: 'Entity rejected successfully',
+        description: `Entity rejected successfully`,
         variant: 'default'
       })
 
@@ -158,6 +184,7 @@ export default function PendingEntities() {
       setSelectedEntity(null)
       fetchPendingEntities() // Refresh the list
     } catch (error: any) {
+      console.error('Rejection error:', error)
       toast({
         title: 'Error',
         description: error.message || 'Failed to reject entity',
@@ -168,10 +195,14 @@ export default function PendingEntities() {
     }
   }
 
-  const getEntityIcon = (entityType: string) => {
-    switch (entityType) {
+  const getEntityIcon = (entity: PendingEntity) => {
+    switch (entity.entityType) {
       case 'institute':
-        return <Building2 className="h-5 w-5 text-blue-600" />
+        // Show different icon for hospitals vs education institutes
+        if (entity.domain === 'healthcare') {
+          return <Building2 className="h-5 w-5 text-red-600" /> // Red for healthcare
+        }
+        return <Building2 className="h-5 w-5 text-blue-600" /> // Blue for education
       case 'shop':
         return <Store className="h-5 w-5 text-green-600" />
       case 'product':
@@ -182,7 +213,15 @@ export default function PendingEntities() {
   }
 
   const getEntityName = (entity: PendingEntity) => {
-    return entity.name || entity.shopName || entity.title || 'Unnamed Entity'
+    const baseName = entity.name || entity.shopName || entity.title || 'Unnamed Entity'
+    
+    // For institutes, show domain information
+    if (entity.entityType === 'institute' && entity.domain) {
+      const domainLabel = entity.domain === 'healthcare' ? 'Hospital' : 'Institute'
+      return `${baseName} (${domainLabel})`
+    }
+    
+    return baseName
   }
 
   const renderEntityCard = (entity: PendingEntity) => (
@@ -190,12 +229,14 @@ export default function PendingEntities() {
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
-            {getEntityIcon(entity.entityType)}
+            {getEntityIcon(entity)}
             <div>
               <CardTitle className="text-lg">{getEntityName(entity)}</CardTitle>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Badge variant="outline" className="capitalize">
-                  {entity.entityType}
+                  {entity.entityType === 'institute' && entity.domain === 'healthcare' 
+                    ? 'Hospital' 
+                    : entity.entityType}
                 </Badge>
                 {entity.type && (
                   <Badge variant="secondary">{entity.type}</Badge>
@@ -220,6 +261,15 @@ export default function PendingEntities() {
               {entity.description}
             </p>
           )}
+          
+          {/* Agent ID Display */}
+          <div className="flex items-center gap-2 text-sm bg-yellow-50 border border-yellow-200 p-2 rounded">
+            <User className="h-4 w-4 text-yellow-600" />
+            <span className="text-yellow-800 font-medium">Agent ID:</span>
+            <span className={`font-bold ${entity.agentId ? 'text-green-600' : 'text-red-600'}`}>
+              {entity.agentId || 'N/A'}
+            </span>
+          </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-sm">
             <div className="flex items-center gap-2">
@@ -247,6 +297,17 @@ export default function PendingEntities() {
               <span className="text-muted-foreground">Status:</span>
               <Badge variant="secondary">Pending Review</Badge>
             </div>
+            
+            {/* Show domain for institutes (education vs healthcare) */}
+            {entity.entityType === 'institute' && entity.domain && (
+              <div className="flex items-center gap-2">
+                <Building2 className="h-4 w-4 text-muted-foreground" />
+                <span className="text-muted-foreground">Domain:</span>
+                <Badge variant="outline" className="capitalize">
+                  {entity.domain === 'healthcare' ? 'Healthcare (Hospital)' : 'Education'}
+                </Badge>
+              </div>
+            )}
           </div>
         </div>
       </CardContent>
@@ -303,25 +364,47 @@ export default function PendingEntities() {
       <div className="border-b border-gray-200">
         <nav className="-mb-px flex space-x-8">
           {[
-            { key: 'institutes', label: 'Institutes', count: entities?.institutes?.length || 0 },
-            { key: 'shops', label: 'Shops', count: entities?.shops?.length || 0 },
-            { key: 'products', label: 'Products', count: entities?.products?.length || 0 }
+            { 
+              key: 'institutes', 
+              label: 'Institutes & Hospitals', 
+              count: (entities?.institutes?.length || 0),
+              description: 'Education institutes and healthcare facilities'
+            },
+            { 
+              key: 'shops', 
+              label: 'Shops', 
+              count: entities?.shops?.length || 0,
+              description: 'Retail and service shops'
+            },
+            { 
+              key: 'products', 
+              label: 'Products', 
+              count: entities?.products?.length || 0,
+              description: 'Marketplace listings'
+            }
           ].map((tab) => (
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key as any)}
-              className={`py-2 px-1 border-b-2 font-medium text-sm ${
+              className={`py-2 px-1 border-b-2 font-medium text-sm text-left ${
                 activeTab === tab.key
                   ? 'border-primary text-primary'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              {tab.label}
-              {tab.count > 0 && (
-                <Badge variant="secondary" className="ml-2">
-                  {tab.count}
-                </Badge>
-              )}
+              <div className="flex flex-col items-start">
+                <span className="flex items-center gap-2">
+                  {tab.label}
+                  {tab.count > 0 && (
+                    <Badge variant="secondary">
+                      {tab.count}
+                    </Badge>
+                  )}
+                </span>
+                <span className="text-xs text-gray-400 mt-1 hidden sm:block">
+                  {tab.description}
+                </span>
+              </div>
             </button>
           ))}
         </nav>
@@ -351,7 +434,11 @@ export default function PendingEntities() {
                   </div>
                   <div>
                     <span className="text-muted-foreground">Type:</span>
-                    <p className="font-medium capitalize">{selectedEntity.entityType}</p>
+                    <p className="font-medium capitalize">
+                      {selectedEntity.entityType === 'institute' && selectedEntity.domain === 'healthcare' 
+                        ? 'Hospital' 
+                        : selectedEntity.entityType}
+                    </p>
                   </div>
                   <div>
                     <span className="text-muted-foreground">Owner:</span>
@@ -361,6 +448,22 @@ export default function PendingEntities() {
                     <span className="text-muted-foreground">Email:</span>
                     <p className="font-medium">{selectedEntity.owner.email}</p>
                   </div>
+                  <div>
+                    <span className="text-muted-foreground">Agent ID:</span>
+                    <p className={`font-medium font-mono ${
+                      selectedEntity.agentId ? 'text-green-600' : 'text-red-600'
+                    }`}>
+                      {selectedEntity.agentId || 'N/A'}
+                    </p>
+                  </div>
+                  {selectedEntity.domain && (
+                    <div>
+                      <span className="text-muted-foreground">Domain:</span>
+                      <p className="font-medium capitalize">
+                        {selectedEntity.domain === 'healthcare' ? 'Healthcare (Hospital)' : 'Education'}
+                      </p>
+                    </div>
+                  )}
                 </div>
                 {selectedEntity.description && (
                   <div className="mt-3">
