@@ -100,12 +100,11 @@ export default function PendingEntities() {
         name: getEntityName(selectedEntity)
       })
       
-      const response = await fetch(`${API_BASE_URL}/api/admin/${selectedEntity.entityType}/${selectedEntity._id}/approval`, {
+      const response = await fetch(`${API_BASE_URL}/api/admin/public/${selectedEntity.entityType}/${selectedEntity._id}/approval`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
         },
-        credentials: 'include',
         body: JSON.stringify({
           status: 'approved',
           notes: reviewNotes
@@ -153,12 +152,11 @@ export default function PendingEntities() {
         name: getEntityName(selectedEntity)
       })
       
-      const response = await fetch(`${API_BASE_URL}/api/admin/${selectedEntity.entityType}/${selectedEntity._id}/approval`, {
+      const response = await fetch(`${API_BASE_URL}/api/admin/public/${selectedEntity.entityType}/${selectedEntity._id}/approval`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
         },
-        credentials: 'include',
         body: JSON.stringify({
           status: 'rejected',
           notes: reviewNotes
