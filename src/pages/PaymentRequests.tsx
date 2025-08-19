@@ -86,6 +86,23 @@ export default function PaymentRequests() {
       const data = await response.json()
       console.log('Payment requests data:', data.paymentRequests)
       console.log('Sample payment request:', data.paymentRequests[0])
+      
+      // Enhanced debugging for Agent ID
+      if (data.paymentRequests && data.paymentRequests.length > 0) {
+        console.log('=== AGENT ID DEBUGGING ===')
+        data.paymentRequests.forEach((payment, index) => {
+          console.log(`Payment ${index + 1}:`, {
+            id: payment._id,
+            entityType: payment.entityType,
+            entityId: payment.entityId,
+            agentId: payment.agentId,
+            hasAgentId: !!payment.agentId,
+            agentIdType: typeof payment.agentId
+          })
+        })
+        console.log('=== END AGENT ID DEBUGGING ===')
+      }
+      
       setPaymentRequests(data.paymentRequests)
       setTotalPages(data.totalPages)
     } catch (error: any) {
@@ -291,15 +308,23 @@ export default function PaymentRequests() {
                 {new Date(request.transactionDate).toLocaleDateString()}
               </span>
             </div>
-            
-            {request.agentId && (
-              <div className="flex items-center gap-2 col-span-2">
-                <User className="h-4 w-4 text-muted-foreground" />
-                <span className="text-muted-foreground">Agent ID:</span>
-                <span className="font-medium">{request.agentId}</span>
-              </div>
-            )}
           </div>
+          
+          {/* Agent ID row - separate from the grid */}
+          <div className="flex items-center gap-2 text-sm">
+            <User className="h-4 w-4 text-muted-foreground" />
+            <span className="text-muted-foreground">Agent ID:</span>
+            <span className="font-medium">
+              {request.agentId || 'N/A'}
+            </span>
+          </div>
+          
+          {/* Debug information for development */}
+          {process.env.NODE_ENV === 'development' && (
+            <div className="text-xs text-muted-foreground">
+              <span>Debug: EntityType={request.entityType}, EntityID={request.entityId || 'null'}, AgentID={request.agentId || 'null'}</span>
+            </div>
+          )}
           
           <div className="text-sm">
             <span className="text-muted-foreground">Transaction ID:</span>
