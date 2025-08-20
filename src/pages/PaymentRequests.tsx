@@ -20,7 +20,8 @@ import {
   Building2,
   Store,
   Package,
-  RefreshCw
+  RefreshCw,
+  AlertCircle
 } from 'lucide-react'
 import { API_BASE_URL } from '@/lib/config'
 
@@ -587,48 +588,43 @@ export default function PaymentRequests() {
           <DialogHeader>
             <DialogTitle>Review Payment Request</DialogTitle>
             <DialogDescription>
-              Review payment details and approve or reject
+              Review the uploaded payment screenshot and approve or reject
             </DialogDescription>
           </DialogHeader>
           
           {selectedRequest && (
             <div className="space-y-4">
-              <div className="space-y-3 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">User:</span>
-                  <span className="font-medium">{selectedRequest.user.fullName || selectedRequest.user.username}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Amount:</span>
-                  <span className="font-medium">${selectedRequest.amount}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Type:</span>
-                  <span className="font-medium capitalize">{selectedRequest.entityType}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Bank:</span>
-                  <span className="font-medium">{selectedRequest.bankName}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Date:</span>
-                  <span className="font-medium">
-                    {new Date(selectedRequest.transactionDate).toLocaleDateString()}
-                  </span>
-                </div>
-                
-                <div className="pt-2 border-t">
-                  <span className="text-muted-foreground">Transaction ID:</span>
-                  <p className="font-mono text-xs bg-muted p-2 rounded mt-1 break-all">{selectedRequest.transactionId}</p>
-                </div>
-                
-                {selectedRequest.notes && (
-                  <div className="pt-2 border-t">
-                    <span className="text-muted-foreground">User Notes:</span>
-                    <p className="text-sm mt-1">{selectedRequest.notes}</p>
+              {/* Show only the uploaded image */}
+              {selectedRequest.screenshotFile ? (
+                <div className="space-y-3">
+                  <div className="text-center">
+                    <h4 className="font-medium text-sm text-muted-foreground mb-2">
+                      Payment Screenshot
+                    </h4>
+                    <div className="bg-gray-50 p-4 rounded-lg border">
+                      <img 
+                        src={`${API_BASE_URL}/uploads/${selectedRequest.screenshotFile}`}
+                        alt="Payment Screenshot"
+                        className="w-full max-w-xs mx-auto rounded-lg border shadow-sm"
+                        onError={(e) => {
+                          console.error('Failed to load image:', selectedRequest.screenshotFile)
+                          console.error('Image path:', `${API_BASE_URL}/uploads/${selectedRequest.screenshotFile}`)
+                          e.currentTarget.style.display = 'none'
+                        }}
+                        onLoad={() => {
+                          console.log('Image loaded successfully:', selectedRequest.screenshotFile)
+                        }}
+                      />
+                    </div>
                   </div>
-                )}
-              </div>
+                </div>
+              ) : (
+                <div className="text-center py-8 text-muted-foreground">
+                  <AlertCircle className="h-12 w-12 mx-auto mb-2 text-amber-500" />
+                  <p className="font-medium">No Screenshot Uploaded</p>
+                  <p className="text-sm">This payment request doesn't have a screenshot attached.</p>
+                </div>
+              )}
 
               <div className="space-y-2">
                 <Label htmlFor="verificationNotes">Notes (Optional)</Label>

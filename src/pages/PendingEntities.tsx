@@ -71,6 +71,21 @@ export default function PendingEntities() {
       
       const data = await response.json()
       console.log('Pending entities data:', data)
+      
+      // Debug: Check entity structure
+      if (data.institutes && data.institutes.length > 0) {
+        console.log('Sample institute:', data.institutes[0])
+        console.log('Institute entityType:', data.institutes[0].entityType)
+      }
+      if (data.shops && data.shops.length > 0) {
+        console.log('Sample shop:', data.shops[0])
+        console.log('Shop entityType:', data.shops[0].entityType)
+      }
+      if (data.products && data.products.length > 0) {
+        console.log('Sample product:', data.products[0])
+        console.log('Product entityType:', data.products[0].entityType)
+      }
+      
       setEntities(data)
     } catch (error: any) {
       toast({
@@ -84,6 +99,9 @@ export default function PendingEntities() {
   }
 
   const handleReview = (entity: PendingEntity) => {
+    console.log('Reviewing entity:', entity)
+    console.log('Entity entityType:', entity.entityType)
+    console.log('Active tab:', activeTab)
     setSelectedEntity(entity)
     setReviewNotes('')
     setShowReviewDialog(true)
@@ -94,13 +112,20 @@ export default function PendingEntities() {
     
     setIsSubmitting(true)
     try {
+      // Use entityType from the entity object (now provided by backend)
+      const entityType = selectedEntity.entityType
+      
+      if (!entityType) {
+        throw new Error('Entity type not found. Please refresh and try again.')
+      }
+      
       console.log('Approving entity:', {
         id: selectedEntity._id,
-        entityType: selectedEntity.entityType,
+        entityType: entityType,
         name: getEntityName(selectedEntity)
       })
       
-      const response = await fetch(`${API_BASE_URL}/api/admin/public/${selectedEntity.entityType}/${selectedEntity._id}/approval`, {
+      const response = await fetch(`${API_BASE_URL}/api/admin/public/${entityType}/${selectedEntity._id}/approval`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -146,13 +171,20 @@ export default function PendingEntities() {
     
     setIsSubmitting(true)
     try {
+      // Use entityType from the entity object (now provided by backend)
+      const entityType = selectedEntity.entityType
+      
+      if (!entityType) {
+        throw new Error('Entity type not found. Please refresh and try again.')
+      }
+      
       console.log('Rejecting entity:', {
         id: selectedEntity._id,
-        entityType: selectedEntity.entityType,
+        entityType: entityType,
         name: getEntityName(selectedEntity)
       })
       
-      const response = await fetch(`${API_BASE_URL}/api/admin/public/${selectedEntity.entityType}/${selectedEntity._id}/approval`, {
+      const response = await fetch(`${API_BASE_URL}/api/admin/public/${entityType}/${selectedEntity._id}/approval`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
