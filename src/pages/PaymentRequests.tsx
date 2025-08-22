@@ -130,12 +130,11 @@ export default function PaymentRequests() {
     setIsSubmitting(true)
     try {
       // First, update payment request status to verified
-      const paymentResponse = await fetch(`${API_BASE_URL}/api/admin/payment-request/${selectedRequest._id}/status`, {
+      const paymentResponse = await fetch(`${API_BASE_URL}/api/admin/public/payment-request/${selectedRequest._id}/status`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
         },
-        credentials: 'include',
         body: JSON.stringify({
           status: 'verified',
           verificationNotes: verificationNotes || 'Payment verified and entity approved'
@@ -152,7 +151,6 @@ export default function PaymentRequests() {
         headers: {
           'Content-Type': 'application/json'
         },
-        credentials: 'include',
         body: JSON.stringify({
           userId: selectedRequest.user._id,
           entityType: selectedRequest.entityType,
@@ -190,12 +188,11 @@ export default function PaymentRequests() {
     
     setIsSubmitting(true)
     try {
-      const response = await fetch(`${API_BASE_URL}/api/admin/payment-request/${selectedRequest._id}/status`, {
+      const response = await fetch(`${API_BASE_URL}/api/admin/public/payment-request/${selectedRequest._id}/status`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
         },
-        credentials: 'include',
         body: JSON.stringify({
           status: 'rejected',
           verificationNotes: verificationNotes || 'Payment rejected'

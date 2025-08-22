@@ -56,9 +56,7 @@ export default function PaymentSettings() {
 
   const fetchPaymentSettings = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/admin/payment-settings`, {
-        credentials: 'include'
-      })
+      const response = await fetch(`${API_BASE_URL}/api/admin/payment-settings`)
       
       if (response.ok) {
         const data = await response.json()
@@ -132,7 +130,6 @@ export default function PaymentSettings() {
 
       const response = await fetch(`${API_BASE_URL}/api/admin/payment-settings`, {
         method: 'POST',
-        credentials: 'include',
         body: formData
       })
 

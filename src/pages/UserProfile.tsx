@@ -68,30 +68,18 @@ export default function UserProfile() {
     try {
       setLoading(true)
       
-      const response = await fetch(`${API_BASE_URL}/api/admin/profile`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          username: formData.username,
-          email: formData.email
-        })
-      })
-
-      if (!response.ok) {
-        const data = await response.json()
-        throw new Error(data.error || 'Failed to update profile')
-      }
-
+      // Since authentication is removed, just show success message
       toast({
         title: 'Success',
-        description: 'Profile updated successfully'
+        description: 'Profile updated successfully (demo mode)'
       })
 
-      // Refresh user data
-      window.location.reload()
+      // Update local state
+      setUser({
+        username: formData.username,
+        email: formData.email,
+        fullName: 'Admin User'
+      })
     } catch (error: any) {
       toast({
         title: 'Error',
@@ -125,26 +113,10 @@ export default function UserProfile() {
     try {
       setLoading(true)
       
-      const response = await fetch(`${API_BASE_URL}/api/admin/change-password`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          currentPassword: formData.currentPassword,
-          newPassword: formData.newPassword
-        })
-      })
-
-      if (!response.ok) {
-        const data = await response.json()
-        throw new Error(data.error || 'Failed to change password')
-      }
-
+      // Since authentication is removed, just show success message
       toast({
         title: 'Success',
-        description: 'Password changed successfully'
+        description: 'Password changed successfully (demo mode)'
       })
 
       // Clear password fields
