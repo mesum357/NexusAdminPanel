@@ -1,12 +1,19 @@
-// Get the API base URL from environment variable or use Railway backend
+// Get the API base URL from environment variable or use appropriate backend
 const getApiBaseUrl = () => {
-  // Use Railway backend URL as the primary backend
+  // Check if we're in development mode
+  const isDevelopment = import.meta.env.MODE === 'development'
+  
+  // Use local backend for development, Railway for production
+  const localUrl = 'http://localhost:5000'
   const railwayUrl = 'https://nexusbackend-production.up.railway.app'
-  const apiUrl = import.meta.env.VITE_API_BASE_URL || railwayUrl
+  
+  // Allow environment variable override
+  const apiUrl = import.meta.env.VITE_API_BASE_URL || (isDevelopment ? localUrl : railwayUrl)
   
   console.log('🔗 API Base URL:', apiUrl)
   console.log('🔗 Environment:', import.meta.env.MODE)
   console.log('🔗 VITE_API_BASE_URL:', import.meta.env.VITE_API_BASE_URL)
+  console.log('🔗 Using backend:', isDevelopment ? 'Local (localhost:5000)' : 'Railway (Production)')
   
   return apiUrl
 }

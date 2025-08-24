@@ -146,13 +146,18 @@ export default function PaymentRequests() {
       }
 
       // Then, automatically approve the corresponding entity
+      console.log('🔄 Automatically approving entity after payment verification...');
+      console.log('   - User ID:', selectedRequest.user?._id || 'unknown');
+      console.log('   - Entity Type:', selectedRequest.entityType);
+      console.log('   - Payment Request ID:', selectedRequest._id);
+      
       const entityResponse = await fetch(`${API_BASE_URL}/api/admin/approve-entity`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          userId: selectedRequest.user._id,
+          userId: selectedRequest.user?._id || 'unknown',
           entityType: selectedRequest.entityType,
           paymentRequestId: selectedRequest._id
         })
@@ -161,6 +166,12 @@ export default function PaymentRequests() {
       if (!entityResponse.ok) {
         console.warn('Payment verified but entity approval failed:', await entityResponse.text())
         // Still show success for payment verification
+      } else {
+        const entityData = await entityResponse.json();
+        console.log('✅ Entity approved successfully:', entityData);
+        console.log('   - Entity ID:', entityData.entityId);
+        console.log('   - Approval Status:', entityData.approvalStatus);
+        console.log('   - Approved At:', entityData.approvedAt);
       }
 
       toast({
@@ -285,7 +296,7 @@ export default function PaymentRequests() {
             <div className="flex items-center gap-2">
               <User className="h-4 w-4 text-muted-foreground" />
               <span className="text-muted-foreground">User:</span>
-              <span className="font-medium">{request.user.fullName || request.user.username}</span>
+              <span className="font-medium">{request.user?.fullName || request.user?.username || 'Unknown User'}</span>
             </div>
             
             <div className="flex items-center gap-2">
@@ -479,7 +490,7 @@ export default function PaymentRequests() {
                           <div className="flex items-center gap-2">
                             <User className="h-4 w-4 text-muted-foreground" />
                             <span className="font-medium">
-                              {request.user.fullName || request.user.username}
+                              {request.user?.fullName || request.user?.username || 'Unknown User'}
                             </span>
                           </div>
                         </td>

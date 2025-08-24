@@ -305,7 +305,7 @@ export default function PendingEntities() {
             <div className="flex items-center gap-2">
               <User className="h-4 w-4 text-muted-foreground" />
               <span className="text-muted-foreground">Owner:</span>
-              <span className="font-medium">{entity.owner.fullName || entity.owner.username}</span>
+              <span className="font-medium">{entity.owner?.fullName || entity.owner?.username || 'Unknown Owner'}</span>
             </div>
             
             <div className="flex items-center gap-2">
@@ -472,11 +472,11 @@ export default function PendingEntities() {
                   </div>
                   <div>
                     <span className="text-muted-foreground">Owner:</span>
-                    <p className="font-medium">{selectedEntity.owner.fullName || selectedEntity.owner.username}</p>
+                    <p className="font-medium">{selectedEntity.owner?.fullName || selectedEntity.owner?.username || 'Unknown Owner'}</p>
                   </div>
                   <div>
                     <span className="text-muted-foreground">Email:</span>
-                    <p className="font-medium">{selectedEntity.owner.email}</p>
+                    <p className="font-medium">{selectedEntity.owner?.email || 'N/A'}</p>
                   </div>
                   <div>
                     <span className="text-muted-foreground">Agent ID:</span>
