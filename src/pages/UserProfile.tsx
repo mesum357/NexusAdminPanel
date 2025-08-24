@@ -15,7 +15,7 @@ import {
   Save,
   ArrowLeft
 } from 'lucide-react'
-import { API_BASE_URL } from '@/lib/config'
+
 
 interface UserProfile {
   username: string
