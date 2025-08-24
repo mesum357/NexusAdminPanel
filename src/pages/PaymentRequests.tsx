@@ -79,7 +79,7 @@ export default function PaymentRequests() {
       if (filters.status) params.append('status', filters.status)
       if (filters.entityType) params.append('entityType', filters.entityType)
 
-      const response = await fetch(`${API_BASE_URL}/api/admin/public/payment-requests?${params}`)
+      const response = await fetch(`${API_BASE_URL}/api/admin/payment-requests?${params}`)
       
       if (!response.ok) {
         throw new Error('Failed to fetch payment requests')
@@ -594,7 +594,16 @@ export default function PaymentRequests() {
                         onError={(e) => {
                           console.error('Failed to load image:', selectedRequest.screenshotFile)
                           console.error('Image path:', `${API_BASE_URL}/uploads/${selectedRequest.screenshotFile}`)
+                          // Show error message instead of hiding the image
                           e.currentTarget.style.display = 'none'
+                          const errorDiv = document.createElement('div')
+                          errorDiv.className = 'text-center text-red-500 text-sm p-4'
+                          errorDiv.innerHTML = `
+                            <div class="mb-2">⚠️ Image could not be loaded</div>
+                            <div class="text-xs text-gray-500">File: ${selectedRequest.screenshotFile}</div>
+                            <div class="text-xs text-gray-500">Path: ${API_BASE_URL}/uploads/${selectedRequest.screenshotFile}</div>
+                          `
+                          e.currentTarget.parentNode.appendChild(errorDiv)
                         }}
                         onLoad={() => {
                           console.log('Image loaded successfully:', selectedRequest.screenshotFile)
