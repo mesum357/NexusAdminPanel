@@ -159,7 +159,7 @@ export default function UserProfile() {
           className="flex items-center gap-2"
         >
           <ArrowLeft className="h-4 w-4" />
-          Back to Dashboard
+          Back to Admin Panel
         </Button>
         <div>
           <h2 className="text-2xl font-bold text-gray-900">User Profile</h2>
