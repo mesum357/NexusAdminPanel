@@ -129,7 +129,7 @@ export default function PaymentRequests() {
     
     setIsSubmitting(true)
     try {
-      // First, update payment request status to verified
+      // Update payment request status to verified (this will automatically approve the entity)
       const paymentResponse = await fetch(`${API_BASE_URL}/api/admin/public/payment-request/${selectedRequest._id}/status`, {
         method: 'PUT',
         headers: {
@@ -145,38 +145,13 @@ export default function PaymentRequests() {
         throw new Error('Failed to update payment request status')
       }
 
-      // Then, automatically approve the corresponding entity
-      console.log('🔄 Automatically approving entity after payment verification...');
-      console.log('   - User ID:', selectedRequest.user?._id || 'unknown');
-      console.log('   - Entity Type:', selectedRequest.entityType);
-      console.log('   - Payment Request ID:', selectedRequest._id);
-      
-      const entityResponse = await fetch(`${API_BASE_URL}/api/admin/approve-entity`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          userId: selectedRequest.user?._id || 'unknown',
-          entityType: selectedRequest.entityType,
-          paymentRequestId: selectedRequest._id
-        })
-      })
-
-      if (!entityResponse.ok) {
-        console.warn('Payment verified but entity approval failed:', await entityResponse.text())
-        // Still show success for payment verification
-      } else {
-        const entityData = await entityResponse.json();
-        console.log('✅ Entity approved successfully:', entityData);
-        console.log('   - Entity ID:', entityData.entityId);
-        console.log('   - Approval Status:', entityData.approvalStatus);
-        console.log('   - Approved At:', entityData.approvedAt);
-      }
+      const paymentData = await paymentResponse.json()
+      console.log('✅ Payment verified successfully:', paymentData)
+      console.log('   - Entity should be automatically approved by the backend')
 
       toast({
-        title: 'Payment Accepted',
-        description: `Payment verified and ${selectedRequest.entityType} approved successfully`,
+        title: 'Payment & Entity Approved',
+        description: `Payment verified and ${selectedRequest.entityType} automatically approved`,
         variant: 'default'
       })
 
@@ -592,7 +567,7 @@ export default function PaymentRequests() {
 
       {/* Review Dialog */}
       <Dialog open={showReviewDialog} onOpenChange={setShowReviewDialog}>
-        <DialogContent className="max-w-md mx-4">
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto mx-4">
           <DialogHeader>
             <DialogTitle>Review Payment Request</DialogTitle>
             <DialogDescription>
@@ -613,7 +588,7 @@ export default function PaymentRequests() {
                       <img 
                         src={`${API_BASE_URL}/uploads/${selectedRequest.screenshotFile}`}
                         alt="Payment Screenshot"
-                        className="w-full max-w-xs mx-auto rounded-lg border shadow-sm"
+                        className="w-full max-w-md mx-auto rounded-lg border shadow-sm"
                         onError={(e) => {
                           console.error('Failed to load image:', selectedRequest.screenshotFile)
                           console.error('Image path:', `${API_BASE_URL}/uploads/${selectedRequest.screenshotFile}`)
@@ -627,12 +602,40 @@ export default function PaymentRequests() {
                   </div>
                 </div>
               ) : (
-                <div className="text-center py-8 text-muted-foreground">
-                  <AlertCircle className="h-12 w-12 mx-auto mb-2 text-amber-500" />
+                <div className="text-center py-6 text-muted-foreground">
+                  <AlertCircle className="h-10 w-10 mx-auto mb-2 text-amber-500" />
                   <p className="font-medium">No Screenshot Uploaded</p>
                   <p className="text-sm">This payment request doesn't have a screenshot attached.</p>
                 </div>
               )}
+
+              {/* Entity Information */}
+              <div className="space-y-3 border-t pt-4">
+                <h4 className="font-medium text-sm text-muted-foreground">Entity Details</h4>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    {selectedRequest.entityType === 'shop' && <Store className="h-4 w-4 text-blue-600" />}
+                    {selectedRequest.entityType === 'institute' && <Building2 className="h-4 w-4 text-green-600" />}
+                    {selectedRequest.entityType === 'hospital' && <Building2 className="h-4 w-4 text-red-600" />}
+                    {selectedRequest.entityType === 'marketplace' && <Package className="h-4 w-4 text-purple-600" />}
+                    <span className="text-sm font-medium capitalize">{selectedRequest.entityType}</span>
+                  </div>
+                  
+                  {selectedRequest.entityId && (
+                    <div className="text-sm">
+                      <span className="text-muted-foreground">Linked Entity ID:</span>
+                      <span className="ml-2 font-mono text-xs bg-gray-100 px-2 py-1 rounded">{selectedRequest.entityId}</span>
+                    </div>
+                  )}
+                  
+                  {selectedRequest.agentId && (
+                    <div className="text-sm">
+                      <span className="text-muted-foreground">Agent ID:</span>
+                      <span className="ml-2">{selectedRequest.agentId}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
 
               <div className="space-y-2">
                 <Label htmlFor="verificationNotes">Notes (Optional)</Label>
