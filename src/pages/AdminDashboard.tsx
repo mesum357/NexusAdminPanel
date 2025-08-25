@@ -8,7 +8,8 @@ import {
   BarChart3,
   User,
   Menu,
-  X
+  X,
+  CreditCard
 } from 'lucide-react'
 
 export default function AdminDashboard() {
@@ -40,6 +41,7 @@ export default function AdminDashboard() {
             <nav className="p-4 space-y-2">
               {[
                 { id: 'pending-entities', label: 'Pending Entities', icon: Clock },
+                { id: 'pending-payments', label: 'Pending Payments', icon: CreditCard },
                 { id: 'users', label: 'User Management', icon: Users },
                 { id: 'payment-settings', label: 'Payment Settings', icon: BarChart3 },
                 { id: 'profile', label: 'Profile', icon: User }
@@ -104,6 +106,7 @@ export default function AdminDashboard() {
             <nav className="-mb-px flex flex-wrap gap-2">
               {[
                 { id: 'pending-entities', label: 'Pending Entities' },
+                { id: 'pending-payments', label: 'Pending Payments' },
                 { id: 'users', label: 'User Management' },
                 { id: 'payment-settings', label: 'Payment Settings' },
                 { id: 'profile', label: 'Profile' }
@@ -132,6 +135,7 @@ export default function AdminDashboard() {
           transition={{ duration: 0.3 }}
         >
           {activeTab === 'pending-entities' && <PendingEntities />}
+          {activeTab === 'pending-payments' && <PendingPayments />}
           {activeTab === 'users' && <UserManagement />}
           {activeTab === 'payment-settings' && <PaymentSettings />}
           {activeTab === 'profile' && <UserProfile />}
@@ -142,6 +146,7 @@ export default function AdminDashboard() {
 }
 
 import PendingEntities from './PendingEntities'
+import PendingPayments from './PendingPayments'
 import UserManagement from './UserManagement'
 import PaymentSettings from './PaymentSettings'
 import UserProfile from './UserProfile'
